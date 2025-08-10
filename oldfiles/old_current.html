@@ -577,6 +577,10 @@
             color: #b91c1c;
         }
 
+
+
+
+
         .ai-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -796,211 +800,6 @@
             background: var(--primary-dark);
         }
 
-        /* Settings Styles */
-        .settings-grid {
-            display: grid;
-            gap: 2rem;
-            max-width: 800px;
-        }
-
-        .settings-section {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-
-        .settings-section h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .settings-row {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .settings-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .settings-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .settings-description {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .settings-input {
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-        }
-
-        .settings-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .settings-toggle {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 24px;
-            background: var(--border);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-switch.on {
-            background: var(--success);
-        }
-
-        .toggle-switch::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-switch.on::before {
-            transform: translateX(26px);
-        }
-
-        .email-list {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .email-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            background: var(--bg-primary);
-            border-radius: 6px;
-            border-left: 3px solid var(--success);
-        }
-
-        .email-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .email-address {
-            font-size: 0.875rem;
-            color: var(--text-primary);
-        }
-
-        .remove-email-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .remove-email-btn:hover {
-            background: #dc2626;
-        }
-
-        .add-email-section {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .add-email-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .add-email-btn:hover {
-            background: var(--primary-dark);
-        }
-
-        .save-settings-btn {
-            width: 100%;
-            background: var(--success);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 1rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .save-settings-btn:hover {
-            background: #059669;
-            transform: translateY(-2px);
-        }
-
-        .settings-status {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            display: none;
-        }
-
-        .settings-status.success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            display: block;
-        }
-
-        .settings-status.error {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            display: block;
-        }
-
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -1032,10 +831,6 @@
             }
 
             .history-controls {
-                flex-direction: column;
-            }
-
-            .add-email-section {
                 flex-direction: column;
             }
         }
@@ -1139,6 +934,8 @@
                         </div>
                     </div>
 
+
+
                     <div class="emergency-section">
                         <div class="emergency-status" id="emergencyStatus">
                             <span class="status-text">System Status: NORMAL</span>
@@ -1153,6 +950,9 @@
                     </div>
                 </div>
             </div>
+
+            
+
 
             <div class="content-section" id="history-content">
                 <div class="history-section">
@@ -1169,6 +969,9 @@
                                 <option value="torque">Torque</option>
                                 <option value="energy">Energy</option>
                                 <option value="extTemp">External Temp</option>
+
+                                
+      
                             </select>
                         </div>
                         <div class="control-group">
@@ -1245,124 +1048,16 @@
             </div>
 
             <div class="content-section" id="settings-content">
-                <div class="settings-grid">
-                    <div class="settings-status" id="settingsStatus"></div>
-                    
-                    <!-- Email Alert Settings -->
-                    <div class="settings-section">
-                        <h3>📧 Email Alert Settings</h3>
-                        
-                        <div class="settings-row">
-                            <div class="settings-label">Enable Email Alerts</div>
-                            <div class="settings-description">Receive email notifications when temperature thresholds are exceeded or emergencies occur</div>
-                            <div class="settings-toggle">
-                                <div class="toggle-switch" id="emailAlertsToggle"></div>
-                                <span id="emailAlertsStatus">Disabled</span>
-                            </div>
-                        </div>
-
-                        <div class="settings-row">
-                            <div class="settings-label">Alert Recipients</div>
-                            <div class="settings-description">Manage email addresses that will receive alert notifications</div>
-                            <div class="email-list" id="emailList">
-                                <div style="text-align: center; color: var(--text-secondary); font-size: 0.875rem;">No email addresses configured</div>
-                            </div>
-                            <div class="add-email-section">
-                                <input type="email" class="settings-input" id="newEmailInput" placeholder="Enter email address" style="flex: 1;">
-                                <button class="add-email-btn" id="addEmailBtn">Add Email</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Temperature Threshold Settings -->
-                    <div class="settings-section">
-                        <h3>🌡️ Temperature Monitoring</h3>
-                        
-                        <div class="settings-row">
-                            <div class="settings-label">Warning Temperature Threshold</div>
-                            <div class="settings-description">Temperature at which warning alerts are triggered (°C)</div>
-                            <input type="number" class="settings-input" id="warningTempInput" min="20" max="80" step="1" value="45">
-                        </div>
-
-                        <div class="settings-row">
-                            <div class="settings-label">Critical Temperature Threshold</div>
-                            <div class="settings-description">Temperature at which emergency stops are activated (°C)</div>
-                            <input type="number" class="settings-input" id="criticalTempInput" min="30" max="100" step="1" value="50">
-                        </div>
-
-                        <div class="settings-row">
-                            <div class="settings-label">Temperature Check Interval</div>
-                            <div class="settings-description">How often to check temperature readings (seconds)</div>
-                            <select class="settings-input" id="tempIntervalSelect">
-                                <option value="1">1 second</option>
-                                <option value="2" selected>2 seconds</option>
-                                <option value="5">5 seconds</option>
-                                <option value="10">10 seconds</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Motor Protection Settings -->
-                    <div class="settings-section">
-                        <h3>🛡️ Motor Protection</h3>
-                        
-                        <div class="settings-row">
-                            <div class="settings-label">Auto Emergency Stop</div>
-                            <div class="settings-description">Automatically stop motor when critical temperature is reached</div>
-                            <div class="settings-toggle">
-                                <div class="toggle-switch on" id="autoStopToggle"></div>
-                                <span id="autoStopStatus">Enabled</span>
-                            </div>
-                        </div>
-
-                        <div class="settings-row">
-                            <div class="settings-label">Auto Stop Delay</div>
-                            <div class="settings-description">Seconds to wait before auto-stopping motor at critical temperature</div>
-                            <select class="settings-input" id="autoStopDelaySelect">
-                                <option value="0">Immediate</option>
-                                <option value="3" selected>3 seconds</option>
-                                <option value="5">5 seconds</option>
-                                <option value="10">10 seconds</option>
-                            </select>
-                        </div>
-
-                        <div class="settings-row">
-                            <div class="settings-label">Motor Cool-down Period</div>
-                            <div class="settings-description">Minutes motor must cool before restart after emergency stop</div>
-                            <input type="number" class="settings-input" id="cooldownPeriodInput" min="1" max="60" step="1" value="5">
-                        </div>
-                    </div>
-
-                    <!-- Data Collection Settings -->
-                    <div class="settings-section">
-                        <h3>📊 Data Collection</h3>
-                        
-                        <div class="settings-row">
-                            <div class="settings-label">Data Collection Interval</div>
-                            <div class="settings-description">How often to collect and store sensor data</div>
-                            <select class="settings-input" id="dataIntervalSelect">
-                                <option value="1">1 second</option>
-                                <option value="2" selected>2 seconds</option>
-                                <option value="5">5 seconds</option>
-                                <option value="10">10 seconds</option>
-                                <option value="30">30 seconds</option>
-                            </select>
-                        </div>
-
-                        <div class="settings-row">
-                            <div class="settings-label">Data Retention Period</div>
-                            <div class="settings-description">How long to keep historical data</div>
-                            <select class="settings-input" id="retentionSelect">
-                                <option value="7">7 days</option>
-                                <option value="30" selected>30 days</option>
-                                <option value="90">90 days</option>
-                                <option value="365">1 year</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Save Button -->
-                    <button class="save-settings-btn" id="saveSettingsBtn">💾 Save All Settings</button>
+                <div class="ai-card">
+                    <h3>System Settings</h3>
+                    <p>Settings panel will be implemented here with configuration options for:</p>
+                    <ul style="margin-top: 1rem; padding-left: 2rem;">
+                        <li>Data collection intervals</li>
+                        <li>Alert thresholds</li>
+                        <li>Network settings</li>
+                        <li>Device calibration</li>
+                        <li>Export/Import configurations</li>
+                    </ul>
                 </div>
             </div>
         </main>
@@ -1426,28 +1121,8 @@
         let historyChart = null;
         let currentSensor = null;
         let chartData = [];
-
-        // Settings state
-        let settings = {
-            emailAlerts: {
-                enabled: false,
-                recipients: []
-            },
-            temperature: {
-                warningThreshold: 45,
-                criticalThreshold: 50,
-                checkInterval: 2
-            },
-            motorProtection: {
-                autoStop: true,
-                autoStopDelay: 3,
-                cooldownPeriod: 5
-            },
-            dataCollection: {
-                interval: 2,
-                retentionPeriod: 30
-            }
-        };
+        let dragOffset = { x: 0, y: 0 };
+        let isDragging = false;
 
         // Sensor configuration matching your backend data structure
         const sensorConfig = [
@@ -1484,159 +1159,7 @@
             generateSensorCards();
             setupEventListeners();
             loadTheme();
-            loadSettings();
             console.log("🚀 Dashboard initialized - waiting for real IoT data");
-        }
-
-        // Load settings from localStorage or server
-        async function loadSettings() {
-            try {
-                // Try to load from server first
-                const response = await fetch('/api/settings');
-                if (response.ok) {
-                    const serverSettings = await response.json();
-                    settings = { ...settings, ...serverSettings };
-                    console.log("📥 Settings loaded from server:", settings);
-                } else {
-                    // Fall back to localStorage
-                    const savedSettings = localStorage.getItem('iotSettings');
-                    if (savedSettings) {
-                        settings = { ...settings, ...JSON.parse(savedSettings) };
-                        console.log("📥 Settings loaded from localStorage:", settings);
-                    }
-                }
-                updateSettingsUI();
-            } catch (error) {
-                console.warn("⚠️ Could not load settings from server, using defaults:", error);
-                updateSettingsUI();
-            }
-        }
-
-        // Save settings to localStorage and server
-        async function saveSettings() {
-            try {
-                showSettingsStatus('Saving settings...', 'info');
-                
-                // Save to localStorage as backup
-                localStorage.setItem('iotSettings', JSON.stringify(settings));
-                
-                // Save to server
-                const response = await fetch('/api/settings', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(settings)
-                });
-                
-                if (response.ok) {
-                    showSettingsStatus('✅ Settings saved successfully!', 'success');
-                    console.log("💾 Settings saved to server:", settings);
-                    
-                    // Update emergency system with new settings
-                    emergencySystem.updateSettings(settings);
-                } else {
-                    throw new Error('Server save failed');
-                }
-            } catch (error) {
-                console.error("❌ Failed to save settings to server:", error);
-                showSettingsStatus('⚠️ Settings saved locally only (server unavailable)', 'error');
-            }
-        }
-
-        // Update settings UI with current values
-        function updateSettingsUI() {
-            // Email alerts
-            const emailToggle = document.getElementById('emailAlertsToggle');
-            const emailStatus = document.getElementById('emailAlertsStatus');
-            emailToggle.classList.toggle('on', settings.emailAlerts.enabled);
-            emailStatus.textContent = settings.emailAlerts.enabled ? 'Enabled' : 'Disabled';
-            
-            // Update email list
-            updateEmailList();
-            
-            // Temperature settings
-            document.getElementById('warningTempInput').value = settings.temperature.warningThreshold;
-            document.getElementById('criticalTempInput').value = settings.temperature.criticalThreshold;
-            document.getElementById('tempIntervalSelect').value = settings.temperature.checkInterval;
-            
-            // Motor protection
-            const autoStopToggle = document.getElementById('autoStopToggle');
-            const autoStopStatus = document.getElementById('autoStopStatus');
-            autoStopToggle.classList.toggle('on', settings.motorProtection.autoStop);
-            autoStopStatus.textContent = settings.motorProtection.autoStop ? 'Enabled' : 'Disabled';
-            
-            document.getElementById('autoStopDelaySelect').value = settings.motorProtection.autoStopDelay;
-            document.getElementById('cooldownPeriodInput').value = settings.motorProtection.cooldownPeriod;
-            
-            // Data collection
-            document.getElementById('dataIntervalSelect').value = settings.dataCollection.interval;
-            document.getElementById('retentionSelect').value = settings.dataCollection.retentionPeriod;
-        }
-
-        // Update email list display
-        function updateEmailList() {
-            const emailList = document.getElementById('emailList');
-            
-            if (settings.emailAlerts.recipients.length === 0) {
-                emailList.innerHTML = '<div style="text-align: center; color: var(--text-secondary); font-size: 0.875rem;">No email addresses configured</div>';
-            } else {
-                emailList.innerHTML = settings.emailAlerts.recipients.map(email => `
-                    <div class="email-item">
-                        <span class="email-address">${email}</span>
-                        <button class="remove-email-btn" onclick="removeEmail('${email}')">Remove</button>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Add email to recipients list
-        function addEmail() {
-            const input = document.getElementById('newEmailInput');
-            const email = input.value.trim();
-            
-            if (!email) {
-                showSettingsStatus('Please enter an email address', 'error');
-                return;
-            }
-            
-            if (!isValidEmail(email)) {
-                showSettingsStatus('Please enter a valid email address', 'error');
-                return;
-            }
-            
-            if (settings.emailAlerts.recipients.includes(email)) {
-                showSettingsStatus('Email address already exists', 'error');
-                return;
-            }
-            
-            settings.emailAlerts.recipients.push(email);
-            input.value = '';
-            updateEmailList();
-            showSettingsStatus(`Added ${email} to alert recipients`, 'success');
-        }
-
-        // Remove email from recipients list
-        function removeEmail(email) {
-            settings.emailAlerts.recipients = settings.emailAlerts.recipients.filter(e => e !== email);
-            updateEmailList();
-            showSettingsStatus(`Removed ${email} from alert recipients`, 'success');
-        }
-
-        // Validate email format
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
-
-        // Show settings status message
-        function showSettingsStatus(message, type) {
-            const statusElement = document.getElementById('settingsStatus');
-            statusElement.textContent = message;
-            statusElement.className = `settings-status ${type}`;
-            
-            if (type !== 'info') {
-                setTimeout(() => {
-                    statusElement.style.display = 'none';
-                }, 5000);
-            }
         }
 
         // Generate sensor cards
@@ -2041,65 +1564,6 @@
 
             // History controls
             document.getElementById('loadHistory').addEventListener('click', loadHistoryData);
-
-            // Settings event listeners
-            setupSettingsEventListeners();
-        }
-
-        // Setup settings-specific event listeners
-        function setupSettingsEventListeners() {
-            // Email alerts toggle
-            document.getElementById('emailAlertsToggle').addEventListener('click', () => {
-                settings.emailAlerts.enabled = !settings.emailAlerts.enabled;
-                updateSettingsUI();
-            });
-
-            // Add email button
-            document.getElementById('addEmailBtn').addEventListener('click', addEmail);
-            
-            // Enter key in email input
-            document.getElementById('newEmailInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') addEmail();
-            });
-
-            // Auto stop toggle
-            document.getElementById('autoStopToggle').addEventListener('click', () => {
-                settings.motorProtection.autoStop = !settings.motorProtection.autoStop;
-                updateSettingsUI();
-            });
-
-            // Temperature thresholds
-            document.getElementById('warningTempInput').addEventListener('change', (e) => {
-                settings.temperature.warningThreshold = parseInt(e.target.value);
-            });
-
-            document.getElementById('criticalTempInput').addEventListener('change', (e) => {
-                settings.temperature.criticalThreshold = parseInt(e.target.value);
-            });
-
-            // All other settings inputs
-            document.getElementById('tempIntervalSelect').addEventListener('change', (e) => {
-                settings.temperature.checkInterval = parseInt(e.target.value);
-            });
-
-            document.getElementById('autoStopDelaySelect').addEventListener('change', (e) => {
-                settings.motorProtection.autoStopDelay = parseInt(e.target.value);
-            });
-
-            document.getElementById('cooldownPeriodInput').addEventListener('change', (e) => {
-                settings.motorProtection.cooldownPeriod = parseInt(e.target.value);
-            });
-
-            document.getElementById('dataIntervalSelect').addEventListener('change', (e) => {
-                settings.dataCollection.interval = parseInt(e.target.value);
-            });
-
-            document.getElementById('retentionSelect').addEventListener('change', (e) => {
-                settings.dataCollection.retentionPeriod = parseInt(e.target.value);
-            });
-
-            // Save settings button
-            document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
         }
 
         // Switch tabs
@@ -2165,6 +1629,7 @@
 
         // Set motor speed
         function setMotorSpeed(speed) {
+           
             if (!motorEnabled && speed > 0) return;
             
             motorSpeed = speed;
@@ -2186,178 +1651,174 @@
             document.getElementById('speedFill').style.width = `${percentage}%`;
         }
 
+
+
         // Emergency Stop System
         class EmergencyStopSystem {
-            constructor() {
-                this.isActive = false;
-                this.temperatureThreshold = settings.temperature.criticalThreshold;
-                this.warningThreshold = settings.temperature.warningThreshold;
-                this.currentTemp = null;
-                this.emergencyBtn = document.getElementById('emergencyBtn');
-                this.emergencyStatus = document.getElementById('emergencyStatus');
-                this.tempReading = document.getElementById('currentTemp');
-                
-                this.initializeEventListeners();
+        constructor() {
+        this.isActive = false;
+        this.temperatureThreshold = 30; // 50°C threshold
+        this.currentTemp = null;
+        this.emergencyBtn = document.getElementById('emergencyBtn');
+        this.emergencyStatus = document.getElementById('emergencyStatus');
+        this.tempReading = document.getElementById('currentTemp');
+        
+        this.initializeEventListeners();
+    }
+
+    initializeEventListeners() {
+        // Emergency button click handler
+        this.emergencyBtn.addEventListener('click', () => {
+            if (this.isActive) {
+                this.executeEmergencyStop();
             }
+        });
+    }
 
-            initializeEventListeners() {
-                // Emergency button click handler
-                this.emergencyBtn.addEventListener('click', () => {
-                    if (this.isActive) {
-                        this.executeEmergencyStop();
-                    }
-                });
-            }
-
-            // Update settings
-            updateSettings(newSettings) {
-                this.temperatureThreshold = newSettings.temperature.criticalThreshold;
-                this.warningThreshold = newSettings.temperature.warningThreshold;
-                console.log(`🔄 Emergency system updated - Warning: ${this.warningThreshold}°C, Critical: ${this.temperatureThreshold}°C`);
-            }
-
-            // Update temperature and check emergency conditions
-            updateTemperature(temperature) {
-                this.currentTemp = temperature;
-                this.tempReading.textContent = `Temp: ${temperature.toFixed(1)}°C`;
-                
-                // Check if emergency conditions are met
-                if (temperature >= this.temperatureThreshold) {
-                    this.activateEmergencySystem('HIGH TEMPERATURE DETECTED');
-                } else if (temperature >= this.warningThreshold) {
-                    this.setWarningState();
-                } else {
-                    this.setNormalState();
-                }
-            }
-
-            // Activate emergency system
-            activateEmergencySystem(reason) {
-                this.isActive = true;
-                this.emergencyBtn.disabled = false;
-                this.emergencyBtn.classList.add('active');
-                
-                // Update status
-                this.emergencyStatus.classList.remove('warning');
-                this.emergencyStatus.classList.add('danger');
-                this.emergencyStatus.querySelector('.status-text').textContent = `⚠️ DANGER: ${reason}`;
-                
-                console.log(`🚨 Emergency system activated: ${reason}`);
-                
-                // Auto-trigger emergency stop if enabled and temp is critically high
-                if (settings.motorProtection.autoStop && this.currentTemp >= this.temperatureThreshold) {
-                    const delay = settings.motorProtection.autoStopDelay * 1000;
-                    setTimeout(() => {
-                        if (this.isActive) {
-                            this.executeEmergencyStop('AUTO');
-                        }
-                    }, delay);
-                }
-            }
-
-            // Set warning state
-            setWarningState() {
-                this.emergencyStatus.classList.remove('danger');
-                this.emergencyStatus.classList.add('warning');
-                this.emergencyStatus.querySelector('.status-text').textContent = '⚠️ WARNING: Temperature Rising';
-            }
-
-            // Set normal state
-            setNormalState() {
-                this.isActive = false;
-                this.emergencyBtn.disabled = true;
-                this.emergencyBtn.classList.remove('active');
-                
-                this.emergencyStatus.classList.remove('warning', 'danger');
-                this.emergencyStatus.querySelector('.status-text').textContent = '✅ System Status: NORMAL';
-            }
-
-            // Execute emergency stop
-            async executeEmergencyStop(trigger = 'MANUAL') {
-                try {
-                    // Visual feedback
-                    this.emergencyBtn.classList.add('stopping');
-                    this.emergencyBtn.querySelector('span').textContent = 'STOPPING MOTOR...';
-                    
-                    // Turn off motor immediately
-                    this.stopMotor();
-                    
-                    // Send emergency alert email if enabled
-                    if (settings.emailAlerts.enabled && settings.emailAlerts.recipients.length > 0) {
-                        await this.sendEmergencyAlert(trigger);
-                    }
-                    
-                    // Update UI
-                    setTimeout(() => {
-                        this.emergencyBtn.querySelector('span').textContent = 'MOTOR STOPPED';
-                        this.emergencyStatus.querySelector('.status-text').textContent = '🛑 EMERGENCY STOP ACTIVATED';
-                        
-                        // Reset after 5 seconds
-                        setTimeout(() => {
-                            this.resetEmergencyButton();
-                        }, 5000);
-                    }, 1500);
-                    
-                } catch (error) {
-                    console.error('❌ Emergency stop failed:', error);
-                    alert('Emergency stop failed! Please manually shut down the motor.');
-                }
-            }
-
-            // Stop motor function
-            stopMotor() {
-                // Set motor speed to 0
-                setMotorSpeed(0);
-                
-                // Turn off motor toggle
-                const motorToggle = document.getElementById('motorToggle');
-                motorToggle.classList.remove('on');
-                motorEnabled = false;
-                
-                console.log('🛑 Motor stopped via emergency system');
-            }
-
-            // Send emergency alert email
-            async sendEmergencyAlert(trigger) {
-                try {
-                    const alertData = {
-                        recipients: settings.emailAlerts.recipients,
-                        trigger: trigger,
-                        temperature: this.currentTemp,
-                        timestamp: new Date().toISOString(),
-                        thresholds: {
-                            warning: this.warningThreshold,
-                            critical: this.temperatureThreshold
-                        }
-                    };
-
-                    const response = await fetch('/api/emergency-alert', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(alertData)
-                    });
-
-                    if (response.ok) {
-                        console.log('✅ Emergency alert email sent to:', settings.emailAlerts.recipients);
-                    } else {
-                        throw new Error('Failed to send emergency email');
-                    }
-
-                } catch (error) {
-                    console.error('❌ Failed to send emergency alert:', error);
-                }
-            }
-
-            // Reset emergency button
-            resetEmergencyButton() {
-                this.emergencyBtn.classList.remove('stopping');
-                this.emergencyBtn.querySelector('span').textContent = 'EMERGENCY STOP';
-                this.isActive = false;
-            }
+    // Update temperature and check emergency conditions
+    updateTemperature(temperature) {
+        this.currentTemp = temperature;
+        this.tempReading.textContent = `Temp: ${temperature.toFixed(1)}°C`;
+        
+        // Check if emergency conditions are met
+        if (temperature >= this.temperatureThreshold) {
+            this.activateEmergencySystem('HIGH TEMPERATURE DETECTED');
+        } else if (temperature >= this.temperatureThreshold - 5) {
+            this.setWarningState();
+        } else {
+            this.setNormalState();
         }
+    }
+
+    // Activate emergency system
+    activateEmergencySystem(reason) {
+        this.isActive = true;
+        this.emergencyBtn.disabled = false;
+        this.emergencyBtn.classList.add('active');
+        
+        // Update status
+        this.emergencyStatus.classList.remove('warning');
+        this.emergencyStatus.classList.add('danger');
+        this.emergencyStatus.querySelector('.status-text').textContent = `⚠️ DANGER: ${reason}`;
+        
+        console.log(`🚨 Emergency system activated: ${reason}`);
+        
+        // Auto-trigger emergency stop after 3 seconds if temp is critically high
+        if (this.currentTemp >= this.temperatureThreshold + 5) {
+            setTimeout(() => {
+                if (this.isActive) {
+                    this.executeEmergencyStop('AUTO');
+                }
+            }, 3000);
+        }
+    }
+
+    // Set warning state
+    setWarningState() {
+        this.emergencyStatus.classList.remove('danger');
+        this.emergencyStatus.classList.add('warning');
+        this.emergencyStatus.querySelector('.status-text').textContent = '⚠️ WARNING: Temperature Rising';
+    }
+
+    // Set normal state
+    setNormalState() {
+        this.isActive = false;
+        this.emergencyBtn.disabled = true;
+        this.emergencyBtn.classList.remove('active');
+        
+        this.emergencyStatus.classList.remove('warning', 'danger');
+        this.emergencyStatus.querySelector('.status-text').textContent = '✅ System Status: NORMAL';
+    }
+
+    
+
+
+    // Execute emergency stop
+    async executeEmergencyStop(trigger = 'MANUAL') {
+        try {
+            // Visual feedback
+            this.emergencyBtn.classList.add('stopping');
+            this.emergencyBtn.querySelector('span').textContent = 'STOPPING MOTOR...';
+            
+            // Turn off motor immediately
+            this.stopMotor();
+            
+            // Send emergency alert email
+            await this.sendEmergencyAlert(trigger);
+            
+            // Update UI
+            setTimeout(() => {
+                this.emergencyBtn.querySelector('span').textContent = 'MOTOR STOPPED';
+                this.emergencyStatus.querySelector('.status-text').textContent = '🛑 EMERGENCY STOP ACTIVATED';
+                
+                // Reset after 5 seconds
+                setTimeout(() => {
+                    this.resetEmergencyButton();
+                }, 5000);
+            }, 1500);
+            
+        } catch (error) {
+            console.error('❌ Emergency stop failed:', error);
+            alert('Emergency stop failed! Please manually shut down the motor.');
+        }
+    }
+
+    
+
+    // Stop motor function
+    stopMotor() {
+        // Set motor speed to 0
+        setMotorSpeed(0);
+        
+        // Turn off motor toggle
+        const motorToggle = document.getElementById('motorToggle');
+        motorToggle.classList.remove('on');
+        motorEnabled = false;
+        
+        console.log('🛑 Motor stopped via emergency system');
+    }
+
+    
+
+    // Send emergency alert email
+    async sendEmergencyAlert(trigger) {
+        console.log("oh")
+        try {
+            const alertData = {
+                to: 'bensbusiness520@gmail.com', // Replace with actual recipient email
+                trigger: trigger,
+                temperature: this.currentTemp,
+                timestamp: new Date().toISOString()
+            };
+
+            const response = await fetch('/emergency-alert', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(alertData)
+            });
+
+            if (response.ok) {
+                console.log('✅ Emergency alert email sent');
+            } else {
+                throw new Error('Failed to send emergency email');
+            }
+
+        } catch (error) {
+            console.error('❌ Failed to send emergency alert:', error);
+        }
+    }
+
+    // Reset emergency button
+    resetEmergencyButton() {
+        this.emergencyBtn.classList.remove('stopping');
+        this.emergencyBtn.querySelector('span').textContent = 'EMERGENCY STOP';
+        this.isActive = false;
+    }
+}
 
         // Initialize emergency system
         const emergencySystem = new EmergencyStopSystem();
+
 
         // Toggle theme
         function toggleTheme() {
@@ -2411,12 +1872,14 @@
             chartData = [];
         }
 
+        
+
         // Load history data from backend
         function loadHistoryData() {
             const parameter = document.getElementById('historyParameter').value;
             const range = document.getElementById('historyRange').value;
 
-            fetch(`/api/history?parameter=${encodeURIComponent(parameter)}&range=${encodeURIComponent(range)}`)
+            fetch(`/history?parameter=${encodeURIComponent(parameter)}&range=${encodeURIComponent(range)}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.length === 0) {
@@ -2431,9 +1894,11 @@
                 });
         }
 
+
         // Generate history chart
         function generateHistoryChart(parameter, historyData) {
-            // Hide no data message if it exists
+
+            // Hide no data message if it exists (ADD THIS)
             const messageEl = document.getElementById('noDataMessage');
             if (messageEl) {
                 messageEl.style.display = 'none';
@@ -2502,63 +1967,67 @@
             });
         }
 
+
+
         // Show "No data available" message
         function showNoDataMessage(parameter, range) {
-            const chartContainer = document.getElementById('historyChart').parentElement;
-            
-            // Clear any existing chart
-            if (historyChart) {
-                historyChart.destroy();
-                historyChart = null;
-            }
-            
-            // Create or update message element
-            let messageEl = document.getElementById('noDataMessage');
-            if (!messageEl) {
-                messageEl = document.createElement('div');
-                messageEl.id = 'noDataMessage';
-                messageEl.style.textAlign = 'center';
-                messageEl.style.padding = '40px';
-                messageEl.style.color = currentTheme === 'dark' ? '#94a3b8' : '#64748b';
-                messageEl.style.fontSize = '16px';
-                chartContainer.appendChild(messageEl);
-            }
-            
-            const sensor = sensorConfig.find(s => s.id === parameter);
-            messageEl.innerHTML = `
-                <div style="margin-bottom: 10px;">📊</div>
-                <div>No data available for <strong>${sensor ? sensor.name : parameter}</strong></div>
-                <div style="font-size: 14px; margin-top: 5px;">Time range: ${range}</div>
-            `;
-            messageEl.style.display = 'block';
-        }
+    const chartContainer = document.getElementById('historyChart').parentElement;
+    
+    // Clear any existing chart
+    if (historyChart) {
+        historyChart.destroy();
+        historyChart = null;
+    }
+    
+    // Create or update message element
+    let messageEl = document.getElementById('noDataMessage');
+    if (!messageEl) {
+        messageEl = document.createElement('div');
+        messageEl.id = 'noDataMessage';
+        messageEl.style.textAlign = 'center';
+        messageEl.style.padding = '40px';
+        messageEl.style.color = currentTheme === 'dark' ? '#94a3b8' : '#64748b';
+        messageEl.style.fontSize = '16px';
+        chartContainer.appendChild(messageEl);
+    }
+    
+    const sensor = sensorConfig.find(s => s.id === parameter);
+    messageEl.innerHTML = `
+        <div style="margin-bottom: 10px;">📊</div>
+        <div>No data available for <strong>${sensor ? sensor.name : parameter}</strong></div>
+        <div style="font-size: 14px; margin-top: 5px;">Time range: ${range}</div>
+    `;
+    messageEl.style.display = 'block';
+}
 
         // Show error message
         function showErrorMessage(message) {
-            const chartContainer = document.getElementById('historyChart').parentElement;
-            
-            if (historyChart) {
-                historyChart.destroy();
-                historyChart = null;
-            }
-            
-            let messageEl = document.getElementById('noDataMessage');
-            if (!messageEl) {
-                messageEl = document.createElement('div');
-                messageEl.id = 'noDataMessage';
-                messageEl.style.textAlign = 'center';
-                messageEl.style.padding = '40px';
-                messageEl.style.color = '#ef4444';
-                messageEl.style.fontSize = '16px';
-                chartContainer.appendChild(messageEl);
-            }
-            
-            messageEl.innerHTML = `
-                <div style="margin-bottom: 10px;">⚠️</div>
-                <div>${message}</div>
-            `;
-            messageEl.style.display = 'block';
-        }
+    const chartContainer = document.getElementById('historyChart').parentElement;
+    
+    if (historyChart) {
+        historyChart.destroy();
+        historyChart = null;
+    }
+    
+    let messageEl = document.getElementById('noDataMessage');
+    if (!messageEl) {
+        messageEl = document.createElement('div');
+        messageEl.id = 'noDataMessage';
+        messageEl.style.textAlign = 'center';
+        messageEl.style.padding = '40px';
+        messageEl.style.color = '#ef4444';
+        messageEl.style.fontSize = '16px';
+        chartContainer.appendChild(messageEl);
+    }
+    
+    messageEl.innerHTML = `
+        <div style="margin-bottom: 10px;">⚠️</div>
+        <div>${message}</div>
+    `;
+    messageEl.style.display = 'block';
+}
+
+
 
         // Update AI statistics periodically
         function updateAIStats() {
@@ -2580,9 +2049,6 @@
                 document.getElementById('sidebar').classList.remove('collapsed');
             }
         });
-
-        // Global function for removing emails (called from HTML)
-        window.removeEmail = removeEmail;
     </script>
 </body>
 </html>

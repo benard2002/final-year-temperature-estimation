@@ -174,7 +174,7 @@ wss.on("connection", (ws)=>{
 
 
 // Fetch aggregated historical sensor data
-app.get("/history", async (req, res) => {
+app.get("/api/history", async (req, res) => {
   try {
     const { parameter, range } = req.query;
     console.log(parameter, range)
@@ -277,72 +277,193 @@ app.post("/test-email", async (req, res) => {
 });
 
 
-// Emergency alert email route
-app.post("/emergency-alert", async (req, res) => {
-  try {
-    const { to, trigger, temperature, timestamp } = req.body;
-    console.log(trigger)
+// // Emergency alert email route
+// app.post("/emergency-alert", async (req, res) => {
+//   try {
+//     const { to, trigger, temperature, timestamp } = req.body;
+//     console.log(trigger)
     
-    const mailOptions = {
-      from: 'ambenard2002@gmail.com', // Your email
-      to: to || 'bensbusiness520@gmail.com', // Default recipient
-      subject: `🚨 EMERGENCY STOP ACTIVATED - Critical Temperature Alert`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: #dc2626; color: white; padding: 20px; text-align: center;">
-                <h1>🚨 EMERGENCY STOP ACTIVATED</h1>
-                <h2>Motor Protection System</h2>
-            </div>
+//     const mailOptions = {
+//       from: 'ambenard2002@gmail.com', // Your email
+//       to: to || 'bensbusiness520@gmail.com', // Default recipient
+//       subject: `🚨 EMERGENCY STOP ACTIVATED - Critical Temperature Alert`,
+//       html: `
+//         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+//             <div style="background: #dc2626; color: white; padding: 20px; text-align: center;">
+//                 <h1>🚨 EMERGENCY STOP ACTIVATED</h1>
+//                 <h2>Motor Protection System</h2>
+//             </div>
             
-            <div style="padding: 30px; background: #fef2f2;">
-                <div style="background: #fee2e2; padding: 20px; border-radius: 8px; border-left: 4px solid #dc2626; margin-bottom: 20px;">
-                    <h3 style="color: #991b1b; margin: 0 0 10px 0;">⚠️ Critical Alert Details:</h3>
-                    <p><strong>Trigger:</strong> ${trigger} Emergency Stop</p>
-                    <p><strong>Temperature:</strong> ${temperature}°C</p>
-                    <p><strong>Time:</strong> ${new Date(timestamp).toLocaleString()}</p>
-                    <p><strong>Status:</strong> Motor has been automatically stopped</p>
-                </div>
+//             <div style="padding: 30px; background: #fef2f2;">
+//                 <div style="background: #fee2e2; padding: 20px; border-radius: 8px; border-left: 4px solid #dc2626; margin-bottom: 20px;">
+//                     <h3 style="color: #991b1b; margin: 0 0 10px 0;">⚠️ Critical Alert Details:</h3>
+//                     <p><strong>Trigger:</strong> ${trigger} Emergency Stop</p>
+//                     <p><strong>Temperature:</strong> ${temperature}°C</p>
+//                     <p><strong>Time:</strong> ${new Date(timestamp).toLocaleString()}</p>
+//                     <p><strong>Status:</strong> Motor has been automatically stopped</p>
+//                 </div>
 
-                <div style="background: white; padding: 20px; border-radius: 8px;">
-                    <h3>🔧 Immediate Actions Taken:</h3>
-                    <ul>
-                        <li>✅ Motor speed set to 0%</li>
-                        <li>✅ Motor power disconnected</li>
-                        <li>✅ System logged emergency event</li>
-                        <li>✅ Alert notification sent</li>
-                    </ul>
-                </div>
+//                 <div style="background: white; padding: 20px; border-radius: 8px;">
+//                     <h3>🔧 Immediate Actions Taken:</h3>
+//                     <ul>
+//                         <li>✅ Motor speed set to 0%</li>
+//                         <li>✅ Motor power disconnected</li>
+//                         <li>✅ System logged emergency event</li>
+//                         <li>✅ Alert notification sent</li>
+//                     </ul>
+//                 </div>
 
-                <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #ffc107;">
-                    <h3 style="color: #856404;">📋 Recommended Actions:</h3>
-                    <ol style="color: #856404;">
-                        <li>Check motor and surrounding area for overheating</li>
-                        <li>Inspect cooling systems and ventilation</li>
-                        <li>Verify sensor calibration</li>
-                        <li>Do not restart motor until temperature normalizes</li>
-                        <li>Contact maintenance team if issue persists</li>
-                    </ol>
-                </div>
-            </div>
+//                 <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #ffc107;">
+//                     <h3 style="color: #856404;">📋 Recommended Actions:</h3>
+//                     <ol style="color: #856404;">
+//                         <li>Check motor and surrounding area for overheating</li>
+//                         <li>Inspect cooling systems and ventilation</li>
+//                         <li>Verify sensor calibration</li>
+//                         <li>Do not restart motor until temperature normalizes</li>
+//                         <li>Contact maintenance team if issue persists</li>
+//                     </ol>
+//                 </div>
+//             </div>
 
-            <div style="background: #6b7280; color: white; padding: 15px; text-align: center; font-size: 12px;">
-                This is an automated emergency alert from your motor monitoring system.
-                <br>System will remain in emergency mode until manually reset.
-            </div>
-        </div>
-    `
-    };
+//             <div style="background: #6b7280; color: white; padding: 15px; text-align: center; font-size: 12px;">
+//                 This is an automated emergency alert from your motor monitoring system.
+//                 <br>System will remain in emergency mode until manually reset.
+//             </div>
+//         </div>
+//     `
+//     };
 
-    await emailTransporter.sendMail(mailOptions);
-    console.log('🚨 Emergency alert email sent successfully');
+//     await emailTransporter.sendMail(mailOptions);
+//     console.log('🚨 Emergency alert email sent successfully');
     
-    res.json({ success: true, message: "Emergency alert sent" });
+//     res.json({ success: true, message: "Emergency alert sent" });
+    
+//   } catch (error) {
+//     console.error('❌ Failed to send emergency alert:', error);
+//     res.status(500).json({ error: "Failed to send emergency alert", details: error.message });
+//   }
+// });
+
+// Replace your existing emergency alert route with this:
+app.post("/api/emergency-alert", async (req, res) => {
+  try {
+    const { recipients, trigger, temperature, timestamp, thresholds } = req.body;
+    
+    // Send to all recipients
+    const emailPromises = recipients.map(recipient => {
+      const mailOptions = {
+        from: 'ambenard2002@gmail.com',
+        to: recipient,
+        subject: `🚨 EMERGENCY STOP ACTIVATED - Critical Temperature Alert`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: #dc2626; color: white; padding: 20px; text-align: center;">
+                  <h1>🚨 EMERGENCY STOP ACTIVATED</h1>
+                  <h2>Motor Protection System</h2>
+              </div>
+              
+              <div style="padding: 30px; background: #fef2f2;">
+                  <div style="background: #fee2e2; padding: 20px; border-radius: 8px; border-left: 4px solid #dc2626; margin-bottom: 20px;">
+                      <h3 style="color: #991b1b; margin: 0 0 10px 0;">⚠️ Critical Alert Details:</h3>
+                      <p><strong>Trigger:</strong> ${trigger} Emergency Stop</p>
+                      <p><strong>Current Temperature:</strong> ${temperature}°C</p>
+                      <p><strong>Critical Threshold:</strong> ${thresholds.critical}°C</p>
+                      <p><strong>Time:</strong> ${new Date(timestamp).toLocaleString()}</p>
+                      <p><strong>Status:</strong> Motor has been automatically stopped</p>
+                  </div>
+
+                  <div style="background: white; padding: 20px; border-radius: 8px;">
+                      <h3>🔧 Immediate Actions Taken:</h3>
+                      <ul>
+                          <li>✅ Motor speed set to 0%</li>
+                          <li>✅ Motor power disconnected</li>
+                          <li>✅ System logged emergency event</li>
+                          <li>✅ Alert notification sent</li>
+                      </ul>
+                  </div>
+
+                  <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #ffc107;">
+                      <h3 style="color: #856404;">📋 Recommended Actions:</h3>
+                      <ol style="color: #856404;">
+                          <li>Check motor and surrounding area for overheating</li>
+                          <li>Inspect cooling systems and ventilation</li>
+                          <li>Verify sensor calibration</li>
+                          <li>Do not restart motor until temperature normalizes</li>
+                          <li>Contact maintenance team if issue persists</li>
+                      </ol>
+                  </div>
+              </div>
+
+              <div style="background: #6b7280; color: white; padding: 15px; text-align: center; font-size: 12px;">
+                  This is an automated emergency alert from your motor monitoring system.
+                  <br>System will remain in emergency mode until manually reset.
+              </div>
+          </div>
+      `
+      };
+      
+      return emailTransporter.sendMail(mailOptions);
+    });
+
+    await Promise.all(emailPromises);
+    console.log('🚨 Emergency alert emails sent to:', recipients);
+    
+    res.json({ success: true, message: "Emergency alerts sent to all recipients" });
     
   } catch (error) {
-    console.error('❌ Failed to send emergency alert:', error);
-    res.status(500).json({ error: "Failed to send emergency alert", details: error.message });
+    console.error('❌ Failed to send emergency alerts:', error);
+    res.status(500).json({ error: "Failed to send emergency alerts", details: error.message });
   }
 });
+
+
+
+
+
+
+// Very very new
+// In-memory settings storage (you can later move this to PostgreSQL)
+let systemSettings = {
+  emailAlerts: {
+    enabled: false,
+    recipients: []
+  },
+  temperature: {
+    warningThreshold: 45,
+    criticalThreshold: 50,
+    checkInterval: 2
+  },
+  motorProtection: {
+    autoStop: true,
+    autoStopDelay: 3,
+    cooldownPeriod: 5
+  },
+  dataCollection: {
+    interval: 2,
+    retentionPeriod: 30
+  }
+};
+
+// GET settings
+app.get("/api/settings", (req, res) => {
+  res.json(systemSettings);
+});
+
+// POST settings (save)
+app.post("/api/settings", (req, res) => {
+  try {
+    systemSettings = { ...systemSettings, ...req.body };
+    console.log("💾 Settings updated:", systemSettings);
+    res.json({ success: true, message: "Settings saved successfully" });
+  } catch (error) {
+    console.error("❌ Error saving settings:", error);
+    res.status(500).json({ error: "Failed to save settings" });
+  }
+});
+
+
+
+
 
 // --- Start the server ---
 server.listen(port, () => {
