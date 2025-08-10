@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 IoT Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="css/general.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="dock-controls">
+                <button class="dock-btn" id="dockBtn" title="Pin/Unpin Sidebar">📌</button>
+                <button class="dock-btn" id="collapseBtn" title="Collapse Sidebar">◀</button>
+            </div>
+            
+            <div class="sidebar-header">
+                <div class="logo">ESP</div>
+                <div class="logo-text">IoT Dashboard</div>
+            </div>
+            
+            <div class="nav-tabs">
+                <a href="#" class="nav-tab active" data-tab="dashboard">
+                    <span class="nav-tab-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-tab" data-tab="motor">
+                    <span class="nav-tab-icon">⚙️</span>
+                    Motor Control
+                </a>
+                <a href="#" class="nav-tab" data-tab="ai">
+                    <span class="nav-tab-icon">🤖</span>
+                    AI Inference
+                </a>
+                <a href="#" class="nav-tab" data-tab="heatmap">
+                    <span class="nav-tab-icon">🔥</span>
+                    Heat Map
+                </a>
+                <a href="#" class="nav-tab" data-tab="settings">
+                    <span class="nav-tab-icon">⚙️</span>
+                    Settings
+                </a>
+            </div>
+
+            <div class="motor-status">
+                <div class="status-indicator" id="motorIndicator"></div>
+                <span>Motor: <span id="motorStatusText">OFF</span></span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="themeToggle">🌓</button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div class="content-section active" id="dashboard-content">
+                    <div class="dashboard-grid" id="sensorGrid">
+                        <!-- Sensor cards will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Motor Control Section -->
+                <div class="content-section" id="motor-content">
+                    <div class="motor-control">
+                        <div class="motor-header">
+                            <h2 class="motor-title">Motor Control</h2>
+                            <div class="motor-toggle">
+                                <span class="toggle-label">Motor</span>
+                                <button class="toggle-switch" id="motorToggle"></button>
+                            </div>
+                        </div>
+
+                        <div class="speed-section">
+                            <div class="speed-header">
+                                <span class="speed-title">Speed Level</span>
+                                <span class="speed-value" id="speedValue">0% (OFF)</span>
+                            </div>
+                            
+                            <div class="speed-progress">
+                                <div class="speed-fill" id="speedFill"></div>
+                            </div>
+                            
+                            <div class="speed-labels">
+                                <span>OFF</span>
+                                <span>20%</span>
+                                <span>40%</span>
+                                <span>60%</span>
+                                <span>80%</span>
+                                <span>100%</span>
+                            </div>
+
+                            <div class="speed-controls">
+                                <button class="speed-btn active" data-speed="0">OFF</button>
+                                <button class="speed-btn" data-speed="1">Speed 1</button>
+                                <button class="speed-btn" data-speed="2">Speed 2</button>
+                                <button class="speed-btn" data-speed="3">Speed 3</button>
+                                <button class="speed-btn" data-speed="4">Speed 4</button>
+                                <button class="speed-btn" data-speed="5">Speed 5</button>
+                            </div>
+                        </div>
+
+                        <div class="motor-status-display">
+                            <div class="status-icon" id="statusIcon">⚡</div>
+                            <div class="status-info">
+                                <div class="status-main" id="statusMain">Motor Stopped</div>
+                                <div class="status-sub" id="statusSub">Click toggle to start motor</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Inference Section -->
+                <div class="content-section" id="ai-content">
+                    <div class="ai-stats">
+                        <div class="ai-card">
+                            <div class="ai-value" id="aiAccuracy">94.2%</div>
+                            <div class="ai-label">Model Accuracy</div>
+                        </div>
+                        <div class="ai-card">
+                            <div class="ai-value" id="aiInferences">1,247</div>
+                            <div class="ai-label">Total Inferences</div>
+                        </div>
+                        <div class="ai-card">
+                            <div class="ai-value" id="aiLatency">23ms</div>
+                            <div class="ai-label">Avg Latency</div>
+                        </div>
+                        <div class="ai-card">
+                            <div class="ai-value" id="aiConfidence">87.3%</div>
+                            <div class="ai-label">Confidence</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Heat Map Section -->
+                <div class="content-section" id="heatmap-content">
+                    <div class="heat-map">
+                        <h2>Sensor Heat Map</h2>
+                        <p style="color: var(--secondary-text); margin-top: 8px;">
+                            Real-time temperature distribution across sensor grid
+                        </p>
+                        <div class="heat-grid" id="heatGrid">
+                            <!-- Heat map cells will be generated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div class="content-section" id="settings-content">
+                    <div class="settings-section">
+                        <h2>Dashboard Settings</h2>
+                        <div class="settings-item">
+                            <div>
+                                <h3>Update Interval</h3>
+                                <p style="color: var(--secondary-text); font-size: 14px;">
+                                    How often to refresh sensor data
+                                </p>
+                            </div>
+                            <select style="padding: 8px; border-radius: 6px; border: 1px solid var(--border);">
+                                <option>1 second</option>
+                                <option selected>2 seconds</option>
+                                <option>5 seconds</option>
+                                <option>10 seconds</option>
+                            </select>
+                        </div>
+                        <div class="settings-item">
+                            <div>
+                                <h3>Auto-refresh</h3>
+                                <p style="color: var(--secondary-text); font-size: 14px;">
+                                    Automatically update dashboard
+                                </p>
+                            </div>
+                            <input type="checkbox" checked style="transform: scale(1.2);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Charts -->
+    <div class="modal" id="chartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Sensor Data</h3>
+                <div class="modal-controls">
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        LIVE
+                    </div>
+                    <button class="close-btn" id="closeModal">✕</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="chart-stats" id="chartStats">
+                    <!-- Stats will be populated here -->
+                </div>
+                <div class="chart-container">
+                    <canvas id="sensorChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        
+    <script src="js/main.js"></script>
+    
+</body>
+</html>

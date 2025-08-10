@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Play MP3 on Click</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="playBtn">Play Sound</button>
+
+  <!-- Hidden audio element -->
+  <audio id="sound" src="./public/emergency-alarm.mp3"></audio>
+
+  <script>
+    const playBtn = document.getElementById("playBtn");
+    const sound = document.getElementById("sound");
+
+    playBtn.addEventListener("click", () => {
+      sound.currentTime = 0; // Restart from beginning
+      sound.play();
+    });
+  </script>
+
+</body>
+</html>
