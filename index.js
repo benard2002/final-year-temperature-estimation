@@ -441,7 +441,6 @@ import { fileURLToPath } from "url";
 import http from "http";
 import { WebSocketServer } from "ws";
 import mqtt from "mqtt";
-import fs from "fs";
 import pg from "pg";
 import nodemailer from "nodemailer";
 import bodyParser from "body-parser";
@@ -498,17 +497,21 @@ function broadcast(data) {
   });
 }
 
+
+
 // --- AWS IoT MQTT Setup ---
 const mqttOptions = {
   clientId: process.env.AWS_IOT_CLIENT_ID,
   host: process.env.AWS_IOT_ENDPOINT,
   port: 8883,
   protocol: "mqtts",
-  key: fs.readFileSync(process.env.AWS_IOT_PRIVATE_KEY),
-  cert: fs.readFileSync(process.env.AWS_IOT_CERT),
-  ca: fs.readFileSync(process.env.AWS_IOT_CA),
+  key: process.env.AWS_IOT_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  cert: process.env.AWS_IOT_CERT.replace(/\\n/g, '\n'),
+  ca: process.env.AWS_IOT_CA.replace(/\\n/g, '\n'),
   rejectUnauthorized: true
 };
+
+
 
 // --- Connect to AWS IoT Core ---
 const mqttClient = mqtt.connect(mqttOptions);
