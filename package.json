@@ -12,6 +12,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.864.0",
+    "@aws-sdk/lib-dynamodb": "^3.864.0",
     "aws-iot-device-sdk": "^2.2.15",
     "body-parser": "^2.2.0",
     "dotenv": "^17.2.1",

@@ -1,0 +1,742 @@
+import "dotenv/config";
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import http from "http";
+import { WebSocketServer } from "ws";
+import mqtt from "mqtt";
+import pg from "pg";
+import nodemailer from "nodemailer";
+import bodyParser from "body-parser";
+
+// --- Email configuration ---
+const emailTransporter = nodemailer.createTransport({
+  service: process.env.EMAIL_SERVICE,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+// --- PostgreSQL DB ---
+const db = new pg.Client({
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT
+});
+
+db.connect();
+
+// --- Path setup for ES modules ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// --- Express App Setup ---
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static("public"));
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+  res.render("index");
+});
+
+// --- Create HTTP + WebSocket Server ---
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
+// --- Broadcast to all WebSocket clients ---
+function broadcast(data) {
+  const json = JSON.stringify(data);
+  wss.clients.forEach(client => {
+    if (client.readyState === 1) {
+      client.send(json);
+    }
+  });
+}
+
+
+
+// --- AWS IoT MQTT Setup ---
+const mqttOptions = {
+  clientId: process.env.AWS_IOT_CLIENT_ID,
+  host: process.env.AWS_IOT_ENDPOINT,
+  port: 8883,
+  protocol: "mqtts",
+  key: process.env.AWS_IOT_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  cert: process.env.AWS_IOT_CERT.replace(/\\n/g, '\n'),
+  ca: process.env.AWS_IOT_CA.replace(/\\n/g, '\n'),
+  rejectUnauthorized: true
+};
+
+
+
+// --- Connect to AWS IoT Core ---
+const mqttClient = mqtt.connect(mqttOptions);
+
+mqttClient.on("connect", () => {
+  console.log("✅ Connected to AWS IoT Core");
+  mqttClient.subscribe("sensors/data", err => {
+    if (err) console.error("❌ Subscription error:", err.message);
+    else console.log("📡 Subscribed to topic: sensors/data");
+  });
+});
+
+// --- Handle incoming MQTT messages ---
+mqttClient.on("message", (topic, message) => {
+  try {
+    const data = JSON.parse(message.toString());
+    console.log("📨 MQTT Data Received:", data);
+    broadcast(data);
+
+    const query = `
+      INSERT INTO sensor_recordings (
+        ref_voltage, humidity, ext_temp, ds18b20_temp, mlx_objtemp, mlx_ambtemp,
+        motor_volt, motor_curr, motor_power, energy, frequency, powerfactor,
+        apparent_power, reactive_power, phase_angle, sync_speed, slip, rotor_speed,
+        torque, efficiency, load_factor, vibration_index
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16, $17, $18,
+        $19, $20, $21, $22
+      )
+    `;
+
+    const values = [
+      data["Ref Voltage"], data["Humidity"], data["Ext Temp"], data["DS18B20 Temp"],
+      data["MLX ObjTemp"], data["MLX AmbTemp"], data["Motor Volt"], data["Motor Curr"],
+      data["Motor Power"], data["Energy"], data["Frequency"], data["PowerFactor"],
+      data["Apparent Power"], data["Reactive Power"], data["Phase Angle"], data["Sync Speed"],
+      data["Slip"], data["Rotor Speed"], data["Torque"], data["Efficiency"],
+      data["Load Factor"], data["Vibration Index"]
+    ];
+
+    db.query(query, values);
+    console.log("✅ Data saved to PostgreSQL");
+
+  } catch (err) {
+    console.error("❌ Error parsing message:", err.message);
+  }
+});
+
+// --- WebSocket listener for frontend commands ---
+wss.on("connection", ws => {
+  console.log("Client connected");
+
+  ws.on("message", message => {
+    try {
+      // console.log(message.toString());
+      const command = JSON.parse(message.toString());
+      let command_to_send;
+      console.log(command)
+      // console.log(command.motorSpeed); // test case
+      
+      function trigger_emergency_relay(){
+        return {relay5:0}
+      }
+
+      function trigger_relay(speed, relay1_state, relay2_state, relay3_state, relay4_state){
+          let command_to_send = {}
+          command_to_send.motorSpeed = speed;
+          command_to_send.relay1 = relay1_state
+          command_to_send.relay2 = relay2_state
+          command_to_send.relay3 = relay3_state
+          command_to_send.relay4 =  relay4_state
+        
+        return command_to_send;
+      }
+
+
+      switch (command.motorSpeed) {
+        case 0:
+          // console.log(trigger_relay(0,0,0,0,0))
+          command_to_send = trigger_relay(0,0,0,0,0)            
+          break;        
+        case 1:
+          // console.log(trigger_relay(1,1,0,0,0));
+          command_to_send = trigger_relay(1,1,0,0,0)
+          break;
+          case 2:
+            // console.log(trigger_relay(2,0,1,0,0));
+            command_to_send = trigger_relay(2,0,1,0,0)       
+          break;
+        case 3:
+          // console.log(trigger_relay(3,1,0,1,0));
+          command_to_send = trigger_relay(3,1,0,1,0)
+          break;
+        case 4:
+          // console.log(trigger_relay(4,1,1,1,0));
+          command_to_send = trigger_relay(4,1,1,1,0)
+          break; 
+        case 5:
+          // console.log(trigger_relay(5,0,0,0,1));
+          command_to_send = trigger_relay(5,0,0,0,1)
+          break;
+        case 'emergency':
+          command_to_send = trigger_emergency_relay();
+        default:
+          break;
+      }
+
+      console.log(command_to_send, 'okkk');
+      mqttClient.publish("motor/control", JSON.stringify(command_to_send), { qos: 0 }, err => {
+        if (err) console.log("❌ Error publishing to AWS IoT:", err);
+        else console.log("Command Published to AWS IoT:", command_to_send);
+      });
+    } catch (err) {
+      console.error("❌ Error handling WS message:", err);
+    }
+  });
+});
+
+// --- Historical data API ---
+app.get("/api/history", async (req, res) => {
+  try {
+    const { parameter, range } = req.query;
+    if (!parameter || !range) return res.status(400).json({ error: "parameter and range are required" });
+
+    let minutes, bucket;
+    switch (range) {
+      case "1h":  minutes = 60; bucket = "1 minute"; break;
+      case "6h":  minutes = 360; bucket = "5 minutes"; break;
+      case "24h": minutes = 1440; bucket = "15 minutes"; break;
+      case "7d":  minutes = 10080; bucket = "1 hour"; break;
+      default: minutes = 60; bucket = "1 minute";
+    }
+
+    const columnMap = {
+      refVoltage: "ref_voltage",
+      humidity: "humidity",
+      extTemp: "ext_temp",
+      ds18b20Temp: "ds18b20_temp",
+      mlxObjTemp: "mlx_objtemp",
+      mlxAmbTemp: "mlx_ambtemp",
+      motorVolt: "motor_volt",
+      motorCurr: "motor_curr",
+      motorPower: "motor_power",
+      energy: "energy",
+      frequency: "frequency",
+      powerFactor: "powerfactor",
+      apparentPower: "apparent_power",
+      reactivePower: "reactive_power",
+      phaseAngle: "phase_angle",
+      syncSpeed: "sync_speed",
+      slip: "slip",
+      rotorSpeed: "rotor_speed",
+      torque: "torque",
+      efficiency: "efficiency",
+      loadFactor: "load_factor",
+      vibrationIndex: "vibration_index"
+    };
+
+    const dbColumn = columnMap[parameter];
+    if (!dbColumn) return res.status(400).json({ error: "Invalid parameter" });
+
+    const query = `
+      SELECT 
+        date_trunc('${bucket.includes("hour") ? "hour" : "minute"}', recorded_at) AS time_bucket,
+        ROUND(AVG(${dbColumn})::numeric, 2) AS value
+      FROM sensor_recordings
+      WHERE recorded_at >= NOW() - INTERVAL '${minutes} minutes'
+      GROUP BY time_bucket
+      ORDER BY time_bucket ASC
+    `;
+
+    const result = await db.query(query);
+    res.json(result.rows);
+
+  } catch (err) {
+    console.error("❌ Error fetching history:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// --- Test email route ---
+app.post("/test-email", async (req, res) => {
+  try {
+    const { to, subject, message } = req.body;
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: to || process.env.EMAIL_USER,
+      subject: subject || "Test Email from Sensor System",
+      html: `
+        <h2>🧪 Test Email</h2>
+        <p>${message || "This is a test email from your sensor monitoring system!"}</p>
+        <p><strong>Time sent:</strong> ${new Date().toLocaleString()}</p>
+      `
+    };
+
+    await emailTransporter.sendMail(mailOptions);
+    console.log("✅ Test email sent successfully");
+    res.json({ success: true, message: "Email sent successfully!" });
+
+  } catch (error) {
+    console.error("❌ Failed to send email:", error);
+    res.status(500).json({ error: "Failed to send email", details: error.message });
+  }
+});
+
+// --- Emergency alert route ---
+app.post("/api/emergency-alert", async (req, res) => {
+  try {
+    const { recipients, trigger, temperature, timestamp, thresholds } = req.body;
+    const emailPromises = recipients.map(recipient => {
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: recipient,
+        subject: "🚨 EMERGENCY STOP ACTIVATED - Critical Temperature Alert",
+        html: `
+          <h1>🚨 EMERGENCY STOP ACTIVATED</h1>
+          <p>Trigger: ${trigger}</p>
+          <p>Temperature: ${temperature}°C</p>
+          <p>Critical Threshold: ${thresholds.critical}°C</p>
+          <p>Time: ${new Date(timestamp).toLocaleString()}</p>
+          <p>Status: Motor stopped</p>
+        `
+      };
+      return emailTransporter.sendMail(mailOptions);
+    });
+
+    await Promise.all(emailPromises);
+    console.log("🚨 Emergency alert emails sent");
+    res.json({ success: true, message: "Emergency alerts sent" });
+
+  } catch (error) {
+    console.error("❌ Failed to send emergency alerts:", error);
+    res.status(500).json({ error: "Failed to send emergency alerts", details: error.message });
+  }
+});
+
+// --- In-memory system settings ---
+let systemSettings = {
+  emailAlerts: { enabled: false, recipients: [] },
+  temperature: { warningThreshold: 45, criticalThreshold: 50, checkInterval: 2 },
+  motorProtection: { autoStop: true, autoStopDelay: 3, cooldownPeriod: 5 },
+  dataCollection: { interval: 2, retentionPeriod: 30 }
+};
+
+app.get("/api/settings", (req, res) => res.json(systemSettings));
+
+app.post("/api/settings", (req, res) => {
+  try {
+    systemSettings = { ...systemSettings, ...req.body };
+    console.log("💾 Settings updated:", systemSettings);
+    res.json({ success: true, message: "Settings saved successfully" });
+  } catch (error) {
+    console.error("❌ Error saving settings:", error);
+    res.status(500).json({ error: "Failed to save settings" });
+  }
+});
+
+// --- Start server ---
+server.listen(port, () => {
+  console.log(`🚀 Server running at http://localhost:${port}`);
+});
+
+
+
+
+
+// // index.js
+// import "dotenv/config";
+// import express from "express";
+// import path from "path";
+// import { fileURLToPath } from "url";
+// import http from "http";
+// import { WebSocketServer } from "ws";
+// import mqtt from "mqtt";
+// import pg from "pg";
+// import nodemailer from "nodemailer";
+// import bodyParser from "body-parser";
+
+// // ------------------------------
+// // Database (Pool) + Init
+// // ------------------------------
+// const { Pool } = pg;
+
+// // Prefer DATABASE_URL (single connection string). Fallback to PG_* vars.
+// const connectionString = process.env.DATABASE_URL || null;
+
+// const poolConfig = connectionString
+//   ? { connectionString, ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false }
+//   : {
+//       user: process.env.PG_USER,
+//       host: process.env.PG_HOST,
+//       database: process.env.PG_DATABASE,
+//       password: process.env.PG_PASSWORD,
+//       port: process.env.PG_PORT ? Number(process.env.PG_PORT) : 5432,
+//       ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
+//     };
+
+// const pool = new Pool(poolConfig);
+
+// async function initializeDatabase() {
+//   try {
+//     await pool.query(`
+    //   CREATE TABLE IF NOT EXISTS sensor_recordings (
+        
+    //   id SERIAL PRIMARY KEY,
+    //   recorded_at TIMESTAMPTZ DEFAULT NOW(),
+    //   ref_voltage       DOUBLE PRECISION,
+    //   humidity          DOUBLE PRECISION,
+    //   ext_temp          DOUBLE PRECISION,
+    //   ds18b20_temp      DOUBLE PRECISION,
+    //   mlx_objtemp       DOUBLE PRECISION,
+    //   mlx_ambtemp       DOUBLE PRECISION,
+    //   motor_volt        DOUBLE PRECISION,
+    //   motor_curr        DOUBLE PRECISION,
+    //   motor_power       DOUBLE PRECISION,
+    //   energy            DOUBLE PRECISION,
+    //   frequency         DOUBLE PRECISION,
+    //   powerfactor       DOUBLE PRECISION,
+    //   apparent_power    DOUBLE PRECISION,
+    //   reactive_power    DOUBLE PRECISION,
+    //   phase_angle       DOUBLE PRECISION,
+    //   sync_speed        DOUBLE PRECISION,
+    //   slip              DOUBLE PRECISION,
+    //   rotor_speed       DOUBLE PRECISION,
+    //   torque            DOUBLE PRECISION,
+    //   efficiency        DOUBLE PRECISION,
+    //   load_factor       DOUBLE PRECISION,
+    //   vibration_index   DOUBLE PRECISION
+    // );
+//   `);
+//     console.log("✅ sensor_recordings table ensured (exists or created)");
+//   } catch (err) {
+//     console.error("❌ Error creating sensor_recordings table:", err);
+//     throw err; // rethrow so startup can fail fast if desired
+//   }
+// }
+
+// // ------------------------------
+// // Email transporter
+// // ------------------------------
+// const emailTransporter = nodemailer.createTransport({
+//   service: process.env.EMAIL_SERVICE,
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS
+//   }
+// });
+
+// // Optional: verify transporter on startup (useful for debugging)
+// async function verifyEmailTransporter() {
+//   if (!process.env.EMAIL_SERVICE || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+//     console.warn("⚠️ Email env vars not fully set; test-email/emergency routes will fail until configured.");
+//     return;
+//   }
+//   try {
+//     const res = await emailTransporter.verify();
+//     console.log("✅ Email transporter verified:", res);
+//   } catch (err) {
+//     console.warn("⚠️ Email transporter verification failed:", err.message);
+//   }
+// }
+
+// // ------------------------------
+// // App + server + websocket
+// // ------------------------------
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+// const app = express();
+// const port = process.env.PORT || 3000;
+
+// app.set("view engine", "ejs");
+// app.set("views", path.join(__dirname, "views"));
+// app.use(express.static("public"));
+// app.use(express.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+
+// app.get("/", (req, res) => res.render("index"));
+
+// const server = http.createServer(app);
+// const wss = new WebSocketServer({ server });
+
+// function broadcast(data) {
+//   const json = JSON.stringify(data);
+//   wss.clients.forEach(client => {
+//     if (client.readyState === 1) client.send(json);
+//   });
+// }
+
+// // ------------------------------
+// // AWS IoT MQTT (certs via env)
+// // ------------------------------
+// function envCert(name) {
+//   const v = process.env[name];
+//   return v ? v.replace(/\\n/g, "\n") : undefined;
+// }
+
+// const mqttOptions = {
+//   clientId: process.env.AWS_IOT_CLIENT_ID || `express-client-${Math.random().toString(36).slice(2, 8)}`,
+//   host: process.env.AWS_IOT_ENDPOINT,
+//   port: 8883,
+//   protocol: "mqtts",
+//   key: envCert("AWS_IOT_PRIVATE_KEY"),
+//   cert: envCert("AWS_IOT_CERT"),
+//   ca: envCert("AWS_IOT_CA"),
+//   rejectUnauthorized: true
+// };
+
+// // If you prefer a URL style connect use `mqtts://<endpoint>`
+// // but passing host+options like below works with certs provided.
+// const mqttClient = mqtt.connect(mqttOptions);
+
+// mqttClient.on("connect", () => {
+//   console.log("✅ Connected to AWS IoT Core");
+//   mqttClient.subscribe("sensors/data", err => {
+//     if (err) console.error("❌ Subscription error:", err.message);
+//     else console.log("📡 Subscribed to topic: sensors/data");
+//   });
+// });
+
+// mqttClient.on("error", err => {
+//   console.error("❌ MQTT Error:", err.message || err);
+// });
+
+// // ------------------------------
+// // MQTT message handler -> DB
+// // ------------------------------
+// mqttClient.on("message", async (topic, message) => {
+//   try {
+//     const data = JSON.parse(message.toString());
+//     console.log("📨 MQTT Data Received:", data);
+//     broadcast(data);
+
+//     const query = `
+//       INSERT INTO sensor_recordings (
+//         ref_voltage, humidity, ext_temp, ds18b20_temp, mlx_objtemp, mlx_ambtemp,
+//         motor_volt, motor_curr, motor_power, energy, frequency, powerfactor,
+//         apparent_power, reactive_power, phase_angle, sync_speed, slip, rotor_speed,
+//         torque, efficiency, load_factor, vibration_index
+//       ) VALUES (
+//         $1, $2, $3, $4, $5, $6,
+//         $7, $8, $9, $10, $11, $12,
+//         $13, $14, $15, $16, $17, $18,
+//         $19, $20, $21, $22
+//       )
+//     `;
+
+//     const values = [
+//       data["Ref Voltage"] ?? null, data["Humidity"] ?? null, data["Ext Temp"] ?? null, data["DS18B20 Temp"] ?? null,
+//       data["MLX ObjTemp"] ?? null, data["MLX AmbTemp"] ?? null, data["Motor Volt"] ?? null, data["Motor Curr"] ?? null,
+//       data["Motor Power"] ?? null, data["Energy"] ?? null, data["Frequency"] ?? null, data["PowerFactor"] ?? null,
+//       data["Apparent Power"] ?? null, data["Reactive Power"] ?? null, data["Phase Angle"] ?? null, data["Sync Speed"] ?? null,
+//       data["Slip"] ?? null, data["Rotor Speed"] ?? null, data["Torque"] ?? null, data["Efficiency"] ?? null,
+//       data["Load Factor"] ?? null, data["Vibration Index"] ?? null
+//     ];
+
+//     await pool.query(query, values);
+//     console.log("✅ Data saved to PostgreSQL");
+//   } catch (err) {
+//     console.error("❌ Error handling MQTT message:", err.message || err);
+//   }
+// });
+
+// // ------------------------------
+// // WebSocket control messages -> MQTT publish
+// // ------------------------------
+// wss.on("connection", ws => {
+//   console.log("Client connected");
+
+//   ws.on("message", message => {
+//     try {
+//       const command = JSON.parse(message.toString());
+//       console.log("WS command:", command);
+//       mqttClient.publish("motor/control", JSON.stringify(command), { qos: 0 }, err => {
+//         if (err) console.log("❌ Error publishing to AWS IoT:", err);
+//         else console.log("📤 Command published to AWS IoT:", command);
+//       });
+//     } catch (err) {
+//       console.error("❌ Error handling WS message:", err);
+//     }
+//   });
+// });
+
+// // ------------------------------
+// // Historical data API
+// // ------------------------------
+// app.get("/api/history", async (req, res) => {
+//   try {
+//     const { parameter, range } = req.query;
+//     if (!parameter || !range) return res.status(400).json({ error: "parameter and range are required" });
+
+//     let minutes, bucket;
+//     switch (range) {
+//       case "1h": minutes = 60; bucket = "1 minute"; break;
+//       case "6h": minutes = 360; bucket = "5 minutes"; break;
+//       case "24h": minutes = 1440; bucket = "15 minutes"; break;
+//       case "7d": minutes = 10080; bucket = "1 hour"; break;
+//       default: minutes = 60; bucket = "1 minute";
+//     }
+
+//     const columnMap = {
+//       refVoltage: "ref_voltage",
+//       humidity: "humidity",
+//       extTemp: "ext_temp",
+//       ds18b20Temp: "ds18b20_temp",
+//       mlxObjTemp: "mlx_objtemp",
+//       mlxAmbTemp: "mlx_ambtemp",
+//       motorVolt: "motor_volt",
+//       motorCurr: "motor_curr",
+//       motorPower: "motor_power",
+//       energy: "energy",
+//       frequency: "frequency",
+//       powerFactor: "powerfactor",
+//       apparentPower: "apparent_power",
+//       reactivePower: "reactive_power",
+//       phaseAngle: "phase_angle",
+//       syncSpeed: "sync_speed",
+//       slip: "slip",
+//       rotorSpeed: "rotor_speed",
+//       torque: "torque",
+//       efficiency: "efficiency",
+//       loadFactor: "load_factor",
+//       vibrationIndex: "vibration_index"
+//     };
+
+//     const dbColumn = columnMap[parameter];
+//     if (!dbColumn) return res.status(400).json({ error: "Invalid parameter" });
+
+//     // Safe because dbColumn comes from the mapping above
+//     const query = `
+//       SELECT
+//         date_trunc('${bucket.includes("hour") ? "hour" : "minute"}', recorded_at) AS time_bucket,
+//         ROUND(AVG(${dbColumn})::numeric, 2) AS value
+//       FROM sensor_recordings
+//       WHERE recorded_at >= NOW() - INTERVAL '${minutes} minutes'
+//       GROUP BY time_bucket
+//       ORDER BY time_bucket ASC
+//     `;
+
+//     const result = await pool.query(query);
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error("❌ Error fetching history:", err);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// });
+
+// // ------------------------------
+// // Email routes (test + emergency)
+// // ------------------------------
+// app.post("/test-email", async (req, res) => {
+//   try {
+//     const { to, subject, message } = req.body;
+//     const mailOptions = {
+//       from: process.env.EMAIL_USER,
+//       to: to || process.env.EMAIL_USER,
+//       subject: subject || "Test Email from Sensor System",
+//       html: `<h2>🧪 Test Email</h2><p>${message || "This is a test email from your sensor monitoring system!"}</p><p><strong>Time sent:</strong> ${new Date().toLocaleString()}</p>`
+//     };
+//     await emailTransporter.sendMail(mailOptions);
+//     res.json({ success: true, message: "Email sent successfully!" });
+//   } catch (error) {
+//     console.error("❌ Failed to send email:", error);
+//     res.status(500).json({ error: "Failed to send email", details: error.message });
+//   }
+// });
+
+// app.post("/api/emergency-alert", async (req, res) => {
+//   try {
+//     const { recipients = [], trigger, temperature, timestamp, thresholds = {} } = req.body;
+//     const emailPromises = recipients.map(recipient => {
+//       const mailOptions = {
+//         from: process.env.EMAIL_USER,
+//         to: recipient,
+//         subject: "🚨 EMERGENCY STOP ACTIVATED - Critical Temperature Alert",
+//         html: `<h1>🚨 EMERGENCY STOP ACTIVATED</h1><p>Trigger: ${trigger}</p><p>Temperature: ${temperature}°C</p><p>Critical Threshold: ${thresholds.critical}</p><p>Time: ${new Date(timestamp).toLocaleString()}</p><p>Status: Motor stopped</p>`
+//       };
+//       return emailTransporter.sendMail(mailOptions);
+//     });
+
+//     await Promise.all(emailPromises);
+//     console.log("🚨 Emergency alert emails sent");
+//     res.json({ success: true, message: "Emergency alerts sent" });
+//   } catch (error) {
+//     console.error("❌ Failed to send emergency alerts:", error);
+//     res.status(500).json({ error: "Failed to send emergency alerts", details: error.message });
+//   }
+// });
+
+// // ------------------------------
+// // Settings endpoints
+// // ------------------------------
+// let systemSettings = {
+//   emailAlerts: { enabled: false, recipients: [] },
+//   temperature: { warningThreshold: 45, criticalThreshold: 50, checkInterval: 2 },
+//   motorProtection: { autoStop: true, autoStopDelay: 3, cooldownPeriod: 5 },
+//   dataCollection: { interval: 2, retentionPeriod: 30 }
+// };
+
+// app.get("/api/settings", (req, res) => res.json(systemSettings));
+// app.post("/api/settings", (req, res) => {
+//   try {
+//     systemSettings = { ...systemSettings, ...req.body };
+//     console.log("💾 Settings updated:", systemSettings);
+//     res.json({ success: true, message: "Settings saved successfully" });
+//   } catch (error) {
+//     console.error("❌ Error saving settings:", error);
+//     res.status(500).json({ error: "Failed to save settings" });
+//   }
+// });
+
+// // ------------------------------
+// // Start: initialize DB, verify email, then start server
+// // ------------------------------
+// async function start() {
+//   try {
+//     await initializeDatabase();
+//     await verifyEmailTransporter();
+//     server.listen(port, () => {
+//       console.log(`🚀 Server running at http://localhost:${port}`);
+//     });
+//   } catch (err) {
+//     console.error("❌ Startup failed:", err);
+//     process.exit(1);
+//   }
+// }
+
+// start();
+
+// // ------------------------------
+// // Graceful shutdown
+// // ------------------------------
+// async function shutdown() {
+//   console.log("🛑 Shutting down...");
+//   try {
+//     await pool.end();
+//     console.log("✅ DB pool closed");
+//   } catch (err) {
+//     console.warn("⚠️ Error closing DB pool:", err);
+//   }
+//   try {
+//     mqttClient.end(true);
+//     console.log("✅ MQTT client disconnected");
+//   } catch (err) {
+//     console.warn("⚠️ Error disconnecting MQTT:", err);
+//   }
+//   server.close(() => {
+//     console.log("✅ HTTP server closed");
+//     process.exit(0);
+//   });
+
+//   // Force exit after timeout
+//   setTimeout(() => {
+//     console.error("⚠️ Forced shutdown");
+//     process.exit(1);
+//   }, 5000);
+// }
+
+// process.on("SIGINT", shutdown);
+// process.on("SIGTERM", shutdown);
+
+

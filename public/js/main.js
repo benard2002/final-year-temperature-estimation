@@ -1,6 +1,9 @@
 
 // WebSocket connection
-const socket = new WebSocket(`ws://${window.location.host}`);
+const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+const socket = new WebSocket(`${protocol}://${window.location.host}`);
+
+// const socket = new WebSocket(`ws://${window.location.host}`);
 
 socket.addEventListener("message", (event) => {
     try {
@@ -776,11 +779,11 @@ function toggleMotor() {
     }
 
     // sendMotorCommand({ motorEnabled, motorSpeed });
-    sendMotorCommand({motorSpeed});
+    // sendMotorCommand({motorSpeed});
 }
 
 // Set motor speed
-function setMotorSpeed(speed) {
+function setMotorSpeed(speed  ) {
     if (!motorEnabled && speed > 0) return;
     
     motorSpeed = speed;
@@ -923,7 +926,9 @@ class EmergencyStopSystem {
     // Stop motor function
     stopMotor() {
         // Set motor speed to 0
-        setMotorSpeed(0);
+        // setMotorSpeed(0);
+        setMotorSpeed(0)
+        sendMotorCommand({motorSpeed:"emergency"})
         
         // Turn off motor toggle
         const motorToggle = document.getElementById('motorToggle');
